@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { IProfile } from '../components/Battle/Results'
+import { IInfo } from '../components/Battle/Results'
 
 const id = '85765946457c8c2c2885';
 const sec = '9a4ad3b170b6b727802fe674c230198bb39bf0fe';
@@ -20,7 +20,7 @@ interface Profile {
 
 export interface IPlayer {
   score: number,
-  profile: IProfile
+  profile: IInfo<string>
 }
 
 const getProfile = (username: string) =>
@@ -32,7 +32,7 @@ const getRepos = (username: string) =>
   axios.get(`${url}${username}/repos${params}&per_page=100`)
 
 
-const getStarCount  = (repos: Repos) => 
+const getStarCount  = (repos: Repos) =>
   repos.data.reduce((count: number, repo) => count + repo.stargazers_count, 0)
 
 
@@ -62,12 +62,16 @@ const getUserData = (player: string) =>
     }
   })
 
+interface Window {
+  encodeURI(uri: string): string;
+  // поидее это должно было сработать, но нет...
+}
 
 const sortPlayers = (players: IPlayer[]) =>
-  players.sort((a,b) => b.score - a.score)
+  players.sort((a, b) => b.score - a.score);
 
 export const api = {
-  battle: (players: string[]) => 
+  battle: (players: string[]) =>
     axios.all(players.map(getUserData))
       .then(sortPlayers)
       .catch(handleError)

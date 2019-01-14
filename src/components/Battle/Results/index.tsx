@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import PlayerPreview from '../PlayerPreview';
 import Loading from '../../Loading';
 
-interface IInfo<T> {
+export interface IInfo<T> {
   avatar_url: T;
   login: T;
   html_url: T;
@@ -22,18 +22,12 @@ interface ProfileProps {
   info: IInfo<string>;
 }
 
-interface PlayerProps {
+interface PlayerProps extends IPlayer {
   label: string;
-  score: number;
-  profile: IInfo<string>;
 }
 
 interface ILocation {
   search: string;
-}
-
-export interface IProfile {
-  profile: IInfo<string>;
 }
 
 interface ResultsProps {
@@ -41,13 +35,13 @@ interface ResultsProps {
 }
 
 interface IPlayer {
-  score: number;
-  profile: IProfile;
+  score?: null | number;
+  profile?: null | IInfo<string>;
 }
 
 interface ResultsState {
-  winner: null | IPlayer;
-  loser: null | IPlayer;
+  winner?: IPlayer;
+  loser?: IPlayer;
   error: null | string;
   loading: boolean;
 }
@@ -97,8 +91,14 @@ const Player = (props: PlayerProps) => (
 
 class Results extends Component<ResultsProps, ResultsState> {
   state = {
-    winner: null,
-    loser: null,
+    winner: {
+      score: null,
+      profile: null
+    },
+    loser: {
+      score: null,
+      profile: null
+    },
     error: null,
     loading: true
   };
@@ -150,10 +150,14 @@ class Results extends Component<ResultsProps, ResultsState> {
         <div className="row">
           <Player
             label="Winner"
-            score={(winner as any).score}
-            profile={(winner as any).profile}
+            score={winner.score}
+            profile={winner.profile}
           />
-          <Player label="Loser" score={(loser as any).score} profile={(loser as any).profile} />
+          <Player
+            label="Loser"
+            score={loser.score}
+            profile={loser.profile}
+          />
         </div>
       </div>
     );
